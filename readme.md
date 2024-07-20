@@ -1,24 +1,36 @@
 # Bus system
 
-# Table of content
-*  Requirements
-*  Installation
-*  Run the project
-___
+## Features
+
+- Add bus
+- Seat block
+- Ticket Booking
+
 ## Requirements
-* python3.10.2
-* Django version 5.0.7
-___
-### Installation
+
+- [Python] - 3.10
+- [Django] - 5.0
+- [Pip version] - 24.0
+
+## Installation
+
+Install the dependencies and devDependencies and start the server.
+
 ```sh
-$ virtualenv -p python3 venv
-$ source venv/bin/activate
-$ git clone https://github.com/akshaysharma1801/django-admin-lte3.git
-$ pip install -r requirements.txt
+Virtualenv -p python3 venv
+cd bussystem
+pip3 install -r requirements.txt
 ```
 
-___
-### Run the project
+Running at local
 ```sh
-$ python manage.py runserver
+python manage.py runserver
+```
+
+
+Verify the deployment by navigating to your server address in
+your preferred browser.
+
+```sh
+127.0.0.1:8000
 ```

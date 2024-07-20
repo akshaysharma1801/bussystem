@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken'   , 
     'apps.account',
     'apps.bus',
+    'drf_yasg',
 
 ]
 
@@ -82,6 +83,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bussystem.wsgi.application'
 
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        # 'Basic': {
+        #     'type': 'basic'
+        # },
+        'Token': {
+            'in': 'header',
+            'name': 'Authorization',
+            'type': 'apiKey',
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

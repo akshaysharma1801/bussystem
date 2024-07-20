@@ -8,9 +8,16 @@ from .serializer import (
 )
 from rest_framework import status
 from django.contrib.auth import authenticate, login, logout
+from drf_yasg.utils import swagger_auto_schema
+from apps.account.schema import (
+    login_user_schema, register_user_schema
+)
+
 
 class LoginView(APIView):
+    """Login user API."""
 
+    @swagger_auto_schema(request_body=login_user_schema,tags=['account'])
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -34,7 +41,9 @@ class LoginView(APIView):
         return Response(serializer.errors)
     
 class RegisterView(APIView):
+    """Register user API."""
 
+    @swagger_auto_schema(request_body=register_user_schema,tags=['account'])
     def post(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():

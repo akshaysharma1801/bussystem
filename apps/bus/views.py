@@ -14,6 +14,12 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import serializers
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
+from apps.bus.schema import (
+    add_bus_schema, add_bus_stop_schema,
+    block_seat_schema, book_ticket_schema
+)
+
 
 class AddBusView(APIView):
     """ Add a new bus from source to destination and timing."""
@@ -21,6 +27,7 @@ class AddBusView(APIView):
     permission_classes = [IsAuthenticated,]
     authentication_classes = [TokenAuthentication, ]
 
+    @swagger_auto_schema(request_body=add_bus_schema,tags=['bus'])
     def post(self, request, *args, **kwargs):
         serializer = BusSerializer(data=request.data)
         if serializer.is_valid():
@@ -37,6 +44,7 @@ class AddBusStopBy(APIView):
     permission_classes = [IsAuthenticated,]
     authentication_classes = [TokenAuthentication, ]
 
+    @swagger_auto_schema(request_body=add_bus_stop_schema,tags=['bus'])
     def post(self, request, *args, **kwargs):
         serializer = BusStopCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
@@ -63,6 +71,17 @@ class BusSearchView(generics.ListAPIView):
     pagination_class = BusListPagination
     queryset = Bus.objects.all()
 
+    from drf_yasg import openapi
+
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('source', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('destination', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('date', openapi.IN_QUERY, type=openapi.TYPE_STRING, format='date')
+    ],tags=['bus'])
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
     def get_queryset(self):
         
         source = self.request.query_params.get('source', None)
@@ -92,6 +111,7 @@ class SeatBlockCreateView(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, ]
     serializer_class = SeatBlockSerializer
 
+    @swagger_auto_schema(request_body=block_seat_schema,tags=['bus'])
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         try:
@@ -109,6 +129,7 @@ class BookingCreateView(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, ]
     serializer_class = BookingSerializer
 
+    @swagger_auto_schema(request_body=book_ticket_schema,tags=['bus'])
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -118,7 +139,6 @@ class BookingCreateView(generics.CreateAPIView):
             except SeatBlock.DoesNotExist:
                 return Response({"error": "Seat block not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            # Create the booking
             booking = Booking.objects.create(seat_block=seat_block)
             booking_serializer = self.get_serializer(booking)
             headers = self.get_success_headers(booking_serializer.data)
